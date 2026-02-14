@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: algodrop-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: algodrop
+  template:
+    metadata:
+      labels:
+        app: algodrop
+    spec:
+      containers:
+      - name: algodrop
+        image: akash79720/algodrop-app:latest  # The image we built earlier
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:mysql://mysql:3306/bluedb?useSSL=false"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "root"
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: "root"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: algodrop-app-svc
+spec:
+  selector: 
+    app: algodrop
+  ports:
+    - protocol: "TCP"
+      port: 8080
+      targetPort: 8080
+  type: NodePort  
